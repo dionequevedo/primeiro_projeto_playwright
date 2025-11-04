@@ -7,7 +7,6 @@ const taskName = faker.lorem.words(3);
 
 test('CT01 - Deve poder cadastrar, marcar e excluir uma tarefa - busca por aproximação', async ({ page, request }) => {
 
-    // Dado que tenho uma nova tarefa
     const task: TaskModel = {
         name: 'Ler um livro sobre TypeScript',
         is_done: false
@@ -21,24 +20,16 @@ test('CT01 - Deve poder cadastrar, marcar e excluir uma tarefa - busca por aprox
 
     await deleteTaskByHelper(request, task.name)
 
-    // E que estou na página de cadastro
     await page.goto('http://localhost:8080');
     await expect(page).toHaveTitle(`Gerencie suas tarefas com Mark L`);
 
-    // Quando faço o cadastro desta tarefa
     await inputTaskName.fill(task.name)
-    //await page.waitForTimeout(1000);
-    await buttonAddName.click()         // criar a tarefa
+    await buttonAddName.click()
 
-    // Então a tarefa é exibida na lista de tarefas
     await expect(target).toBeVisible()
 
-    // E posso marcá-la como executada
-    //await page.waitForTimeout(1000);
     await buttonSelect.click()
 
-    // E posso remover a tarefa
-    //await page.waitForTimeout(1000);
     await exclusionButton.click()
     await expect(target).not.toBeVisible()
 })
@@ -46,7 +37,6 @@ test('CT01 - Deve poder cadastrar, marcar e excluir uma tarefa - busca por aprox
 test(`CT02 - Não deve permitir tarefa duplicada`, async ({ page, request }) => {
     /* constantes */
 
-    // Dado que tenho uma nova tarefa
     const inputTaskName = page.locator(`input[class*=InputNewTask]`)
 
     const task: TaskModel = {
@@ -54,24 +44,19 @@ test(`CT02 - Não deve permitir tarefa duplicada`, async ({ page, request }) => 
         "is_done": false
     }
 
-    // Remove a tarefa a ser cadastrada caso ela já exista
     await deleteTaskByHelper(request, task.name)
-    // Cadastra uma nova tarefa
     await createNewTask(request, task.name)
 
     const buttonAddName = page.locator(`button[class*=listButtonNewTask]`)
     const newTarget = page.locator('//div[contains(@class,"html-container") and text()="Task already exists!"]')
 
-    // E que estou na página de cadastro
     await page.goto('http://localhost:8080');
     await expect(page).toHaveTitle(`Gerencie suas tarefas com Mark L`);
 
-    // Então quando tento recadastrar a tarefa deve aparecer o aviso// Quando faço o cadastro desta tarefa
     await inputTaskName.fill(task.name)
     await buttonAddName.click()
     await expect(newTarget).toBeVisible()
 
-    // Remove a tarefa a ser cadastrada para limpar a base
     await deleteTaskByHelper(request, task.name)
 
 })
