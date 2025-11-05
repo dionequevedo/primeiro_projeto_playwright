@@ -66,5 +66,13 @@ export class TasksPage {
         const validateMessage = await this.inputTaskName.evaluate(e => (e as HTMLInputElement).validationMessage);
         expect(validateMessage).toEqual(errorMessage);
     }
+
+    async removeAllTasks(request: APIRequestContext) {
+        const taskElements = this.page.locator('//div[@data-testid="task-item"]/p');
+        const taskNames = await taskElements.allTextContents();
+        for (const taskName of taskNames) {
+            await deleteTaskByHelper(request, taskName);
+        }
+    }
     
 }

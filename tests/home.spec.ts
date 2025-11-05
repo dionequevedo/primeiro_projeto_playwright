@@ -9,7 +9,7 @@ test('CT01 - Deve poder cadastrar, marcar e excluir uma tarefa', async ({ page, 
     // Setup
     const task: TaskModel = data.success
     const tasksPage = new TasksPage(page)
-    await tasksPage.clearTask(request, task.name)
+    await tasksPage.removeAllTasks(request)
     // Teste
     await tasksPage.go()
     await tasksPage.create(task)
@@ -26,7 +26,7 @@ test(`CT02 - Não deve permitir tarefa duplicada`, async ({ page, request }) => 
     // Setup
     const task: TaskModel = data.duplicate
     const tasksPage = new TasksPage(page)
-    await tasksPage.clearTask(request, task.name)
+    await tasksPage.removeAllTasks(request)
     await tasksPage.createTaskViaAPI(request, task.name)
 
     // Test
@@ -39,6 +39,7 @@ test(`CT02 - Não deve permitir tarefa duplicada`, async ({ page, request }) => 
 test('CT03 - Deve poder cadastrar uma nova tarefa', async ({ page, request }) => {
     // Setup
     const tasksPage = new TasksPage(page)
+    await tasksPage.removeAllTasks(request)
     let taskName = await tasksPage.taskNameGenerator()
     const task: TaskModel = {
         "name": `${taskName}`,
@@ -51,13 +52,15 @@ test('CT03 - Deve poder cadastrar uma nova tarefa', async ({ page, request }) =>
     await tasksPage.shouldHaveText(task.name)
 
     // Teardown
-    await tasksPage.clearTask(request, task.name)
+    await tasksPage.removeAllTasks(request)
 })
 
-test('CT04 - Deve validar o campo obrigatório ao cadastrar uma tarefa', async ({ page }) => {
+test('CT04 - Deve validar o campo obrigatório ao cadastrar uma tarefa', async ({ page, request }) => {
     // Setup
     const tasksPage = new TasksPage(page)
     const task: TaskModel = data.required
+    await tasksPage.removeAllTasks(request)
+
     // Test
     await tasksPage.go()
     await tasksPage.create(task)
