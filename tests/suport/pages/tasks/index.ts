@@ -45,8 +45,15 @@ export class TasksPage {
     }
 
     async toggleTask(taskName: string) {
-        const buttonSelect = this.page.locator(`//p[text()="${taskName}"]/preceding::button[contains(@class, "listItemToggle")][1]`)
+        const buttonSelect = this.page.locator(`//p[text()="${taskName}"]/..//button[contains(@class, "listItemToggle")]`)
         await buttonSelect.click()
+    }
+
+    async shouldBeDone(taskName: string) {
+        //const target1 = this.page.locator(`//p[contains(@class,"listItemTextSelected") and text()="${taskName}"]/..//button[contains(@class, "listItemTextSelected")]`)
+        const target = this.page.locator(`//p[contains(@class,"listItemTextSelected") and text()="${taskName}"]`)
+        await expect(target).toHaveCSS('text-decoration', 'line-through')
+        //await expect(target1).toHaveCSS('stroke', 'stroke-linecap')
     }
 
     async clearTask(request: APIRequestContext, taskName: string) {
